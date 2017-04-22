@@ -4,7 +4,7 @@ The [et gem](https://rubygems.org/gems/et), rewritten in Go.
 
 ## Features
 
-* [ ] et init
+* [x] et init
 * [ ] et list
 * [ ] et get slug
 * [ ] et submit
