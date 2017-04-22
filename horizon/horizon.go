@@ -1,45 +1,70 @@
 package horizon
 
 import (
-    "fmt"
-    "log"
-    "io/ioutil"
-    "net/http"
-    "github.com/spf13/viper"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+
+	"github.com/spf13/viper"
 )
 
+type etConfig struct {
+	token    string
+	username string
+	host     string
+}
+
+// Holds the users Horizon HTTP config
+var config etConfig
+
 func Get() string {
-    token, ok := viper.Get("token").(string)
+	config := getConfig()
 
-    if !ok {
-      log.Fatal("No token present")
-    }
+	url := fmt.Sprintf("%s/lessons.json", config.host)
 
-    username, ok := viper.Get("username").(string)
+	client := &http.Client{}
+	request, err := http.NewRequest("GET", url, nil)
+	request.SetBasicAuth(config.username, config.token)
 
-    if !ok {
-      log.Fatal("No username present")
-    }
+	response, err := client.Do(request)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    host, ok := viper.Get("host").(string)
+	defer response.Body.Close()
+	bodyText, err := ioutil.ReadAll(response.Body)
 
-    if !ok {
-      log.Fatal("No host present")
-    }
+	return string(bodyText)
+}
 
-    url := fmt.Sprintf("%s/lessons.json", host)
+func getConfig() *etConfig {
+	if config != (etConfig{}) {
+		return &config
+	}
 
-    client := &http.Client{}
-    request, err := http.NewRequest("GET", url, nil)
-    request.SetBasicAuth(username, token)
+	token, ok := viper.Get("token").(string)
 
-    response, err := client.Do(request)
-    if err != nil{
-        log.Fatal(err)
-    }
+	if !ok {
+		log.Fatal("No token present")
+	}
 
-    defer response.Body.Close()
-    bodyText, err := ioutil.ReadAll(response.Body)
+	username, ok := viper.Get("username").(string)
 
-    return string(bodyText)
+	if !ok {
+		log.Fatal("No username present")
+	}
+
+	host, ok := viper.Get("host").(string)
+
+	if !ok {
+		log.Fatal("No host present")
+	}
+
+	config := &etConfig{
+		token:    token,
+		username: username,
+		host:     host,
+	}
+	return config
 }
