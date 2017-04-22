@@ -5,7 +5,7 @@ The [et gem](https://rubygems.org/gems/et), rewritten in Go.
 ## Features
 
 * [x] et init
-* [ ] et list
+* [x] et list
 * [ ] et get slug
 * [ ] et submit
 
@@ -19,4 +19,29 @@ curl example. API uses basic auth.
 
 ```no-highlight
 curl -u $USERNAME:$TOKEN --request GET https://learn.launchacademy.com/lessons.json
+```
+
+## et get slug
+
+Get the lesson in json format.
+
+```no-highlight
+curl -u $USERNAME:$TOKEN --request GET https://learn.launchacademy.com/lessons/slug.json
+```
+
+```json
+{
+  "lesson": {
+    "slug": "...",
+    "title": "...",
+    "body": "...",
+    "archive_url": "..."
+  }
+}
+```
+
+Get the `archive_url`, and make another GET request.
+
+```no-highlight
+curl --request GET https://horizon-production.s3.amazonaws.com/downloads/lessons/archive/need-the-ingredients/need-the-ingredients.tar.gz
 ```
