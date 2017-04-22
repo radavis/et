@@ -39,6 +39,8 @@ func initConfig() {
 		log.Fatal(err)
 	}
 
+	viper.Set("host", "https://learn.launchacademy.com")
+
 	viper.AddConfigPath(home) // adding home directory as first search path
 	viper.AddConfigPath(".")  // add current directory
 	viper.AutomaticEnv()      // read in environment variables that match
