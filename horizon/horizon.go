@@ -20,7 +20,7 @@ type etConfig struct {
 // Holds the users Horizon HTTP config
 var config etConfig
 
-func Get(path string) string {
+func Get(path string) ([]byte, error) {
 	config := getConfig()
 	url := UrlEncoded(fmt.Sprintf("%s/%s", config.host, path))
 
@@ -34,23 +34,41 @@ func Get(path string) string {
 	}
 
 	defer response.Body.Close()
-	bodyText, err := ioutil.ReadAll(response.Body)
+
+	body, readErr := ioutil.ReadAll(response.Body)
+	return body, readErr
+}
+
+func GetLesson(slug string) *Lesson {
+	b, err := Get(fmt.Sprintf("/lessons/%s.json", slug))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to create url", err)
 	}
 
-	return string(bodyText)
+	type LessonResponse struct {
+		Lesson Lesson `json:"lesson"`
+	}
+	lr := &LessonResponse{}
+
+	err = json.Unmarshal(b, &lr)
+	if err != nil {
+		log.Fatal("Failed to marshal", err)
+	}
+	return &lr.Lesson
 }
 
 func GetLessons() *Lessons {
-	lessonJson := Get("lessons.json")
-	lessons := &Lessons{}
-
-	err := json.Unmarshal([]byte(lessonJson), &lessons)
+	b, err := Get("lessons.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	lessons := &Lessons{}
+
+	err = json.Unmarshal(b, &lessons)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return lessons
 }
 
