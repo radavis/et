@@ -77,23 +77,9 @@ func getConfig() *etConfig {
 		return &config
 	}
 
-	token, ok := viper.Get("token").(string)
-
-	if !ok {
-		log.Fatal("No token present")
-	}
-
-	username, ok := viper.Get("username").(string)
-
-	if !ok {
-		log.Fatal("No username present")
-	}
-
-	host, ok := viper.Get("host").(string)
-
-	if !ok {
-		log.Fatal("No host present")
-	}
+	token := viper.GetString("token")
+	username := viper.GetString("username")
+	host := viper.GetString("host")
 
 	config := &etConfig{
 		token:    token,

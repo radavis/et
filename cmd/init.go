@@ -16,14 +16,12 @@ var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize current directory as a work area",
 	Run: func(cmd *cobra.Command, args []string) {
-		username := StringRequired("Enter your username: ")
-		token := StringRequired("Enter your ET token: ")
-		host := StringRequired("Host for ET: ")
+		username := StringRequired("Username: ")
+		token := StringRequired("Token: ")
 
 		configTemplate := fmt.Sprintf(`username: %s
 token: %s
-host: %s
-`, username, token, host)
+`, username, token)
 		home, err := homedir.Dir()
 		if err != nil {
 			log.Fatal(err)
@@ -34,6 +32,7 @@ host: %s
 		if err != nil {
 			log.Fatal(err)
 		}
+		fmt.Printf("Saved configuration to %s\n", configPath)
 	},
 }
 
