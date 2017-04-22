@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -72,18 +73,21 @@ func GetLessons() *Lessons {
 	return lessons
 }
 
-func PostLesson(filepath) *Lessons {
+func PostLesson(slug string, file *os.File) string {
 	config := getConfig()
-	url := UrlEncoded(fmt.Sprintf("%s/%s", config.host, path))
+	u := UrlEncoded(fmt.Sprintf("%s/lessons/%s/submissions.json", config.host, slug))
 
+	fmt.Println("URL: ", u)
 	client := &http.Client{}
-	request, err := http.NewRequest("POST", url, nil)
+	request, err := http.NewRequest("POST", url, file)
 	request.SetBasicAuth(config.username, config.token)
+	request.Header.Add("Content-Type", "application/x-tar")
 
 	response, err := client.Do(request)
 	if err != nil {
 		log.Fatal(err)
 	}
+	return response.Status
 }
 
 func getConfig() *etConfig {
