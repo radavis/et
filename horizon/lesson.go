@@ -2,9 +2,12 @@ package horizon
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"net/http"
-	"io"
+	"io/ioutil"
+
+	"github.com/mholt/archiver"
 )
 
 type Lesson struct {
@@ -21,12 +24,12 @@ type Lessons struct {
 
 func (l *Lesson) GetArchive() {
 	filename := fmt.Sprintf("%s.tar.gz", l.Slug)
-	output_file, err := os.Create(filename)
+
+	tempfile, err := ioutil.TempFile("", filename)
 	if err != nil {
-		fmt.Println("Error while creating", filename, "-", err)
-		return
+		log.Fatal(err)
 	}
-	defer output_file.Close()
+	defer os.Remove(tempfile.Name())
 
 	response, err := http.Get(l.ArchiveUrl)
 	if err != nil {
@@ -35,11 +38,18 @@ func (l *Lesson) GetArchive() {
 	}
 	defer response.Body.Close()
 
-	n, err := io.Copy(output_file, response.Body)
+	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		fmt.Println("Error while downloading", l.ArchiveUrl, "-", err)
-		return
+		log.Fatal(err)
 	}
 
-	fmt.Println(n, "bytes downloaded.")
+	_, err = tempfile.Write(body);
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = archiver.TarGz.Open(tempfile.Name(), ".")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
