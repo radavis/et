@@ -2,7 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
+	"path"
 
+	"github.com/mitchellh/go-homedir"
 	. "github.com/radavis/et/common"
 	"github.com/spf13/cobra"
 )
@@ -15,9 +19,21 @@ var initCmd = &cobra.Command{
 		username := StringRequired("Enter your username: ")
 		token := StringRequired("Enter your ET token: ")
 		host := StringRequired("Host for ET: ")
-		fmt.Println(username)
-		fmt.Println(token)
-		fmt.Println(host)
+
+		configTemplate := fmt.Sprintf(`username: %s
+token: %s
+host: %s
+`, username, token, host)
+		home, err := homedir.Dir()
+		if err != nil {
+			log.Fatal(err)
+		}
+		configPath := path.Join(home, ".et.yaml")
+
+		err = ioutil.WriteFile(configPath, []byte(configTemplate), 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
