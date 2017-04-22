@@ -40,8 +40,10 @@ curl -u $USERNAME:$TOKEN --request GET https://learn.launchacademy.com/lessons/s
 }
 ```
 
-Get the `archive_url`, and make another GET request.
+Use the `archive_url` to make another GET request for the lesson archive data.
 
 ```no-highlight
 curl --request GET https://horizon-production.s3.amazonaws.com/downloads/lessons/archive/need-the-ingredients/need-the-ingredients.tar.gz
 ```
+
+Then, uncompress.
