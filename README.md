@@ -55,5 +55,5 @@ When `et submit` is run from folder:
   * POST archive to API.
 
 ```no-highlight
-curl -u $USERNAME:$TOKEN --request POST -d @archive.tar.gz http://learn.launchacademy.com/lessons/slug/submissions.json
+curl -u $USERNAME:$TOKEN --request POST -F "submission[archive]=@archive.tar.gz" https://learn.launchacademy.com/lessons/{slug}/submissions.json --verbose
 ```
