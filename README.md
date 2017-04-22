@@ -6,7 +6,7 @@ The [et gem](https://rubygems.org/gems/et), rewritten in Go.
 
 * [x] et init
 * [x] et list
-* [ ] et get slug
+* [x] et get slug
 * [ ] et submit
 
 ## et init
@@ -47,3 +47,13 @@ curl --request GET https://horizon-production.s3.amazonaws.com/downloads/lessons
 ```
 
 Then, uncompress.
+
+## et submit
+
+When `et submit` is run from folder:
+  * Package up folder (archive.tar.gz).
+  * POST archive to API.
+
+```no-highlight
+curl -u $USERNAME:$TOKEN --request POST -d @archive.tar.gz http://learn.launchacademy.com/lessons/slug/submissions.json
+```

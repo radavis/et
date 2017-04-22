@@ -72,6 +72,20 @@ func GetLessons() *Lessons {
 	return lessons
 }
 
+func PostLesson(filepath) *Lessons {
+	config := getConfig()
+	url := UrlEncoded(fmt.Sprintf("%s/%s", config.host, path))
+
+	client := &http.Client{}
+	request, err := http.NewRequest("POST", url, nil)
+	request.SetBasicAuth(config.username, config.token)
+
+	response, err := client.Do(request)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func getConfig() *etConfig {
 	if config != (etConfig{}) {
 		return &config
